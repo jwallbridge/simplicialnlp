@@ -108,7 +108,9 @@ These are the values used for the base parameters for Universal Transformer in D
 
 Troubleshooting the attempts to reach the above benchmarks.
 
-https://github.com/pytorch/fairseq/issues/346
+https://github.com/pytorch/fairseq/issues/346  
+
+http://nlp.seas.harvard.edu/2018/04/03/attention
 
 
 ## Data and pre-preprocessing
