@@ -119,6 +119,7 @@ This includes IWSLT 2014 (lightweight task) and WMT 2014 (heavyweight task).
 * https://github.com/tensorflow/models/tree/master/official/transformer  
 This is for WMT 2017 and contains alot of useful information.
 
+These use BPE (byte pair encoding) to build a subword dictionary to improve model performance (Sennrich et al).
 
 ## Embedding Layer
 
