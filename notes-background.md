@@ -1,3 +1,5 @@
+# Simplicial Transformer for Machine Translation
+
 This component of the project involves training the simplicial transformer on a common machine translation task WMT14 EN-DE.  For debugging the architecture, we use IWSLT14 EN-DE which is significantly smaller.  If time permits, WMT14 EN-FR can be tackled.
 
 For this task, we expect the simplicial transformer to encode more refined representations of N-grams for N > 1. This would provide an improved architectural block, in comparison to existing 1-simplex attention, for machine translation.  Indeed, the prominent measure for evaluating translations, the BLEU-score, uses a 4-gram precision comparison algorithm.  Therefore, we expect that a 3-truncated simplicial attention block to be sufficient for improving existing benchmarks.
