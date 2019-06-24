@@ -29,6 +29,9 @@ the source side is *synthetic* MT output while the target is genuine human writt
 corpus is then added to the real bitext in order to train a final system that will translate from the source to the 
 target language.  
 
+In a similar spirit to back-translation is dual learning (Cheng et al)(He et al).  See also the most recent Extracts.pdf.  These methods can also be combined.  However, we want to isolate the contribution from the simplicial block.  Therefore I suggest not chasing SOTA results and simply demonstrate the performance increase due to simplicial attention all else being equal, ie. simply improve the above BLEU scores.
+
+
 ## Data and pre-preprocessing
 
 * https://github.com/pytorch/fairseq/tree/master/examples/translation  
