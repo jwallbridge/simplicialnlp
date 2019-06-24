@@ -32,8 +32,67 @@ target language.
 In a similar spirit to back-translation is dual learning (Cheng et al)(He et al).  See also the most recent Extracts.pdf.  These methods can also be combined.  However, we want to isolate the contribution from the simplicial block.  Therefore I suggest not chasing SOTA results and simply demonstrate the performance increase due to simplicial attention all else being equal, ie. simply improve the above BLEU scores.
 
 
+## Benchmark Models
+
+kpot (Vanilla and Universal tranformer)  
+https://github.com/kpot/keras-transformer
+
+Tensor2Tensor (Official Universal Transformer)
+https://github.com/tensorflow/tensor2tensor/blob/master/tensor2tensor/models/research/universal_transformer.py
+
+
 ## Hyperparameters
 
+For Vaswani et al, the base transformer has values (v1)
+
+>  hparams.norm_type = "layer"  
+  hparams.hidden_size = 512  
+  hparams.batch_size = 4096  
+  hparams.max_length = 256  
+  hparams.clip_grad_norm = 0.  # i.e. no gradient clipping  
+  hparams.optimizer_adam_epsilon = 1e-9  
+  hparams.learning_rate_schedule = "legacy"  
+  hparams.learning_rate_decay_scheme = "noam"  
+  hparams.learning_rate = 0.1  
+  hparams.learning_rate_warmup_steps = 4000  
+  hparams.initializer_gain = 1.0  
+  hparams.num_hidden_layers = 6  
+  hparams.initializer = "uniform_unit_scaling"  
+  hparams.weight_decay = 0.0  
+  hparams.optimizer_adam_beta1 = 0.9  
+  hparams.optimizer_adam_beta2 = 0.98  
+  hparams.num_sampled_classes = 0  
+  hparams.label_smoothing = 0.1  
+  hparams.shared_embedding_and_softmax_weights = True  
+  hparams.symbol_modality_num_shards = 16  
+
+then (v2) adds
+
+> hparams.layer_prepostprocess_dropout = 0.1  
+  hparams.attention_dropout = 0.1  
+  hparams.relu_dropout = 0.1  
+  hparams.learning_rate_warmup_steps = 8000  
+  hparams.learning_rate = 0.2  
+
+then (v3) adds
+
+> hparams.optimizer_adam_beta2 = 0.997
+  \# New way of specifying learning rate schedule.
+  \# Equivalent to previous version.
+  hparams.learning_rate_schedule = (
+      "constant-linear_warmup-rsqrt_decay-rsqrt_hidden_size")
+  hparams.learning_rate_constant = 2.0
+
+whilst the big version has (v3) with
+
+> hparams.hidden_size = 1024
+  hparams.filter_size = 4096
+  \# Reduce batch size to 2048 from 4096 to be able to train the model on a GPU
+  \# with 12 GB memory. For example, NVIDIA TITAN V GPU.
+  hparams.batch_size = 2048
+  hparams.num_heads = 16
+  hparams.layer_prepostprocess_dropout = 0.3
+  
 These are the values used for the base parameters for Universal Transformer in Dehghani et al
 
 > \# To have a similar capacity to the transformer_base with 6 layers,  
