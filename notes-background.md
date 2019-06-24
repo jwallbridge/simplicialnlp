@@ -32,6 +32,19 @@ target language.
 In a similar spirit to back-translation is dual learning (Cheng et al)(He et al).  See also the most recent Extracts.pdf.  These methods can also be combined.  However, we want to isolate the contribution from the simplicial block.  Therefore I suggest not chasing SOTA results and simply demonstrate the performance increase due to simplicial attention all else being equal, ie. simply improve the above BLEU scores.
 
 
+## Hyperparameters
+
+These are the values used for the base parameters for Universal Transformer in Dehghani et al
+
+> \# To have a similar capacity to the transformer_base with 6 layers,  
+  \# we need to increase the size of the UT's layer  
+  \# since, in fact, UT has a single layer repeating multiple times.  
+  hparams.hidden_size = 1024  
+  hparams.filter_size = 4096  
+  hparams.num_heads = 16  
+  hparams.layer_prepostprocess_dropout = 0.3    
+
+
 ## Data and pre-preprocessing
 
 * https://github.com/pytorch/fairseq/tree/master/examples/translation  
