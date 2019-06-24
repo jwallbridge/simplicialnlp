@@ -10,5 +10,5 @@ The repository includes :
 The notebooks include (for n <= 3) :
 * `trans_v1.ipynb` the vanilla transformer (Vaswani et al).
 * `unitrans_v1.ipynb` the universal transformer (Dehghani et al).
-* `simptrans_v1.ipynb` the sparse simplicial transformer.
-* `unisimptrans_v1.ipynb` the universal sparse simplicial transformer.
+* `simptrans_v1.ipynb` the simplicial transformer.
+* `unisimptrans_v1.ipynb` the universal simplicial transformer.
