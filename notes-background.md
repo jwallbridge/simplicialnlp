@@ -104,6 +104,13 @@ These are the values used for the base parameters for Universal Transformer in D
   hparams.layer_prepostprocess_dropout = 0.3    
 
 
+## Tips for reproducibility
+
+Troubleshooting the attempts to reach the above benchmarks.
+
+https://github.com/pytorch/fairseq/issues/346
+
+
 ## Data and pre-preprocessing
 
 * https://github.com/pytorch/fairseq/tree/master/examples/translation  
