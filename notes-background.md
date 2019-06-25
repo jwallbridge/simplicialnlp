@@ -152,7 +152,12 @@ Two refinements to the pure max-probability based beam search algorithm are a co
 
 ## Probing, sparsity and visualization
 
-Recent work (Voita et al) (Michel et al) show that a large percentage of attention heads can be pruned away without significantly impacting performance.
+Recent work (Voita et al) (Michel et al) show the following 
+* A large percentage of attention heads can be pruned away without significantly impacting performance.
+* Performance drops much more rapidly when heads are pruned from the Enc-Dec layer as opposed to the self attention layers.
+* Important heads have one or more specialized and interpretable functions in the model.
+* The functions correspond to attention to neighbouring words and to tokens in specific syntactic dependency relations
+* At test time, most heads are redundent.
 
 From Clarke et al
 >We compute the average entropy of each head's attention distribution. We find that some attention heads, especially in lower layers, have very broad attention. These high-entropy attention heads typically spend at most 10% of their attention mass on any single word. The output of these heads is roughly a bag-of-vectors representation of the sentence.
