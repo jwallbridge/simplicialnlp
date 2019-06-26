@@ -19,22 +19,15 @@ class _BaseAttentionOne(Layer):
         :param num_heads: number of attention heads 
         :param kwargs: any extra arguments typical for a Keras layer, such as name, etc.
         """
+        #self.mask = mask
         self.num_heads = num_heads
         super().__init__(**kwargs)
 
     def get_config(self):
         config = super().get_config()
         config['num_heads'] = self.num_heads
-        #config['dropout'] = self.dropout
+        #config['mask'] = self.mask
         return config
-
-    def multi_softmax(target, axis, name=None):
-        with tf.name_scope(name, 'softmax', values=[target]):
-            max_axis = tf.reduce_max(target, axis, keep_dims=True)
-            target_exp = tf.exp(target-max_axis)
-            normalize = tf.reduce_sum(target_exp, axis, keep_dims=True)
-            softmax = target_exp / normalize
-            return softmax
 
     def build_output_params(self, d1_model):
         self.output_weights = self.add_weight(
@@ -50,50 +43,58 @@ class _BaseAttentionOne(Layer):
                 f'({d1_model}) must be evenly divisible by the number'
                 f'of the attention heads {self.num_heads}')
 
-    def attention_one(self, pre_q, pre_v, pre_k1, mask, d1_model: int,
+    def attention_one(self, pre_q, pre_v, pre_k1, out_seq_len: int, d1_model: int, mask,
                   training=None):
         """
         :param pre_q: (batch_size, q_seq_len, num_heads, d1_model // num_heads)
         :param pre_v: (batch_size, v_seq_len, num_heads, d1_model // num_heads)
         :param pre_k1: (batch_size, k1_seq_len, num_heads, d1_model // num_heads)
         :param mask: Float tensor with shape broadcastable to (..., seq_len_q, seq_len_k). Defaults to None.
-         The mask has different shapes depending on its type (padding or look ahead). 
+                     The mask has different shapes depending on its type (padding or look ahead). 
         :param out_seq_len: the length of the output sequence
         :param d1_model: dimensionality of the model (by the paper)
         :param training: Passed by Keras. 
         """
-        # shaping Q and V into (batch_size, num_heads, seq_len, d1_model)
+        depth1 = d1_model // self.num_heads
+
+        # shaping Q, K1 and V into (batch_size, num_heads, seq_len, depth1)
         q = K.permute_dimensions(pre_q, [0, 2, 1, 3])
         k1 = K.permute_dimensions(pre_k1, [0, 2, 1, 3])
         v = K.permute_dimensions(pre_v, [0, 2, 1, 3])
 
-        # shaping K into (batch_size, num_heads, depth1, seq_len)
-        q = K.reshape(q, (-1, seq_len, d1_model // self.num_heads))
-        k1 = K.reshape(k1, (-1, seq_len, d1_model // self.num_heads))
-        v = K.reshape(v, (-1, seq_len, d1_model // self.num_heads))
+        q_shape = K.int_shape(q)
+        seq_len = q_shape[-2]
+
+        # shaping into (-1, seq_len, depth1) by collapsing batch and head dimensions
+        # this allows simultaneous operation on all heads
+        q = K.reshape(q, (-1, seq_len, depth1))
+        k1 = K.reshape(k1, (-1, seq_len, depth1))
+        v = K.reshape(v, (-1, seq_len, depth1))
 
         pre_logitsvector = tf.einsum('aib,ajb->aij', q, k1)   # <q, k1>      
-        norm = K.constant(np.sqrt(d1_model // self.num_heads), dtype = K.floatx())
+        norm = K.constant(np.sqrt(depth1), dtype = K.floatx())
         logitsvector = pre_logitsvector / norm
 
-        # Add the mask to the scaled tensor.  The mask is multiplied with -1e9 (close to negative infinity) because 
-        # the mask is summed with the scaled matrix multiplication of Q and K and is applied immediately before a softmax.
+        # Add the mask to the logits vector.  The mask is multiplied with -1e9 (close to negative infinity) because 
+        # the mask is summed with the matrix multiplication of Q and K1 and is applied immediately before a softmax.
         if mask is not None:
             logitsvector += (mask * -1e9)
 
-        a = multi_softmax(logitsvector, axis=-1)  # (-1, seq_len, seq_len) for computing p^{K,i}_{j}
+        a = K.softmax(logitsvector, axis=-1)  # (-1, seq_len, seq_len) for computing p^{K,i}_{j}
 
         # Computes \sum_{j}p^{i}_{j} A(v[j])
         # Av = tf.einsum('qr,ajr->aqj', self.A_weights, v)
+        attention_heads = tf.einsum('aij,ajq->aiq', a, v)  # (-1,seq_len,depth1)
 
-        attention_heads = tf.einsum('aij,ajq->aiq', a, v)  # (-1,seq_len,depth2)
+        # shaping into (-1, num_heads, seq_len, depth1)
+        attention_heads = K.reshape(attention_heads,(-1,self.num_heads,seq_len,depth1)) 
 
-        attention_heads = K.reshape(attention_heads,(-1, self.num_heads, seq_len, d1_model // self.num_heads)) # (-1, num_heads, seq_len, depth1)
-        attention_heads = K.permute_dimensions(attention_heads, [0, 2, 1, 3]) # (-1, seq_len, self.num_heads, depth1)
+        # shape into (-1, seq_len, self.num_heads, depth1)
+        attention_heads = K.permute_dimensions(attention_heads, [0, 2, 1, 3]) 
         
-        attention_heads_concatenated = K.reshape(attention_heads,(-1,seq_len,d1_model)) # (-1, seq_len, d1_model)
+        attention_heads_concatenated = K.reshape(attention_heads,(-1,seq_len,d1_model)) 
         
-        return attention_heads_concatenated
+        return attention_heads_concatenated     # of shape (-1, seq_len, d1_model)
         
 
     def create_look_ahead_mask(size):
@@ -151,7 +152,9 @@ class SelfAttentionOne(_BaseAttentionOne):
 
         # The first thing we need to do is to perform affine transformations
         # of the inputs to get the Queries, Keys and Values.
-        qkv = K.dot(K.reshape(inputs, [-1, d1_model]), self.qkv_weights)
+        qkv = K.dot(inputs, self.qkv_weights)  #(-1, seq_len, d1_model*3)
+
+        qkv = K.reshape(qkv,[-1,d1_model*3])
 
         # splitting the keys, the values and the queries before further processing
         pre_q, pre_k1, pre_v = [
@@ -161,13 +164,14 @@ class SelfAttentionOne(_BaseAttentionOne):
                 (-1, seq_len, self.num_heads, d1_model // self.num_heads))
             for i in range(3)]
 
-        self_attention_out = self.attention_one(pre_q, pre_v, pre_k1, mask, d1_model,
+        self_attention_out = self.attention_one(pre_q, pre_v, pre_k1, seq_len, d1_model, mask,
                                        training=kwargs.get('training'))
 
-        return self_attention_out
+        return self_attention_out   #(-1, seq_len, d1_model)
 
     def compute_output_shape(self, input_shape):
-        return input_shape
+        shape_a, seq_len, d1_model = input_shape
+        return (shape_a, seq_len, d1_model)
 
 
 

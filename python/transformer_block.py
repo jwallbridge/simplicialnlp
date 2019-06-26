@@ -156,9 +156,10 @@ class EncoderBlock:  # NOTE : Universal transformer paper actually places Residu
     connecting the pieces by passing vanilla_wiring=True to the constructor.
     """
     def __init__(self, name: str, num_heads: int, 
-                 drop_rate: float = 0, activation: Optional[Union[str, Callable]] = 'gelu'):
+                 drop_rate: float = 0, 
+                 activation: Optional[Union[str, Callable]] = 'gelu'):
 
-        self.mha = SelfAttentionOne(num_heads,
+        self.mha = SelfAttentionOne(num_heads, 
                                        name=f'{name}_self_attention_one')
 
         self.norm1_layer = LayerNormalization(name=f'{name}_normalization1')
@@ -212,18 +213,16 @@ class DecoderBlock:
     - Residual connection
     - Dropout
     - Layer normalization
-
-    You can use classical Transformer's (2017) way of
-    connecting the pieces by passing vanilla_wiring=True to the constructor.
     """
-    def __init__(self, name: str, num_heads: int, d1_model: int,
+
+    def __init__(self, name: str, num_heads: int,
                  drop_rate: float = 0,
                  activation: Optional[Union[str, Callable]] = 'gelu'):
 
-        self.mha1 = SelfAttentionOne(d1_model, num_heads,
+        self.mha1 = SelfAttentionOne(num_heads,
                            name=f'{name}_self_attention1_one')
 
-        self.mha2 = AttentionOne(d1_model, num_heads, 
+        self.mha2 = AttentionOne(num_heads, 
                            name=f'{name}_self_attention2_one')
 
         self.norm1_layer = LayerNormalization(name=f'{name}_normalization1')
@@ -243,7 +242,6 @@ class DecoderBlock:
         self.addition_layer = Add(name=f'{name}_add')
 
 
-
     def __call__(self, _input, look_ahead_mask, padding_mask):
 
         output = self.mha1(_input, look_ahead_mask)
@@ -251,7 +249,7 @@ class DecoderBlock:
             self.dropout_layer(self.addition_layer([_input, output])))
         norm1_output = self.norm1_layer(post_residual1)
 
-        # Takes two tensors : kv from TransformerEncoderBlock output + q from norm1_output
+        # Takes two tensors : kv from EncoderBlock output + q from norm1_output
         output = self.mha2(enc_output, norm1_output, padding_mask)   
         post_residual2 = (
             self.dropout_layer(self.addition_layer([inputs, output])))
