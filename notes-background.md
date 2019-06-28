@@ -37,6 +37,9 @@ In a similar spirit to back-translation is dual learning (Cheng et al)(He et al)
 kpot (Vanilla and Universal tranformer)  
 https://github.com/kpot/keras-transformer
 
+Tensorflow (Vanilla)
+https://github.com/tensorflow/models/tree/master/official/transformer
+
 Tensor2Tensor (Official Universal Transformer)
 https://github.com/tensorflow/tensor2tensor/blob/master/tensor2tensor/models/research/universal_transformer.py
 
