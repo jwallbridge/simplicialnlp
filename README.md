@@ -14,7 +14,7 @@ If you find this helpful in your work, you can consider citing the following :
 
 ```
 @article{clift19,    
-  author = {James Clift, Dmitry Doryn, Daniel Murfet and James Wallbridge},    
+  author = {James Clift and Dmitry Doryn and Daniel Murfet and James Wallbridge},    
   title = {Logic and the 2-Simplicial Transformer},    
   journal = {preprint arXiv:1909.00668},    
   year = {2019},    
