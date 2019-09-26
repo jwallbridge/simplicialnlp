@@ -1,4 +1,5 @@
-# Simplicial Transformer architecture (Encoder and Decoder)
+# Simplicial Transformer Architecture   
+# (Encoder and Decoder)
 
 This is the code repository for a 2- and 3-Simplicial Transformer architecture developed for the project [2simplicialtransformer](https://github.com/dmurfet/2simplicialtransformer) by James Clift, Dmitry Doryn, Daniel Murfet and James Wallbridge.  It includes both an Encoder and Decoder.
 
