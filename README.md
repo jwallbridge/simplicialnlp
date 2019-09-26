@@ -1,45 +1,22 @@
-# Simplicial Language Transformer
+# Simplicial Transformer architecture (Encoder and Decoder)
 
-This is the code repository for the language component of the project [simplicialtransformer](https://github.com/dmurfet/simplicialtransformer) by James Clift, Dmitry Doryn, Daniel Murfet and James Wallbridge.
+This is the code repository for a 2- and 3-Simplicial Transformer architecture developed for the project [2simplicialtransformer](https://github.com/dmurfet/2simplicialtransformer) by James Clift, Dmitry Doryn, Daniel Murfet and James Wallbridge.  It includes both an Encoder and Decoder.
 
-The repository includes :
-* `notes-background.md` which details various theoretical motivations based on existing literature.
-* `notes-implementation.md` with issues running the code and increasing efficiency.
-* `notes-experiments.md` the experiment log.
+This repository includes :
+* `attention2_layer.py` a 2-simplicial attention layer.
+* `attention3_layer.py` a 3-simplicial attention layer.
+* `transformer2_100.py` a Transformer with 2-simplicial Encoder and standard Decoder.
 
-The notebooks include (for n <= 3) :
-* `trans_v1.ipynb` the vanilla transformer (Vaswani et al).
-* `unitrans_v1.ipynb` the universal transformer (Dehghani et al).
-* `simptrans_v1.ipynb` the simplicial transformer.
-* `unisimptrans_v1.ipynb` the universal simplicial transformer.
 
-## File content
+# Referencing
 
-* `data_download.py`   
-Downloads and preprocesses the training and evaluation WMT datasets. After the data is downloaded and extracted, the training data is used to generate a vocabulary of subtokens. The evaluation and training strings are tokenized, and the resulting data is sharded, shuffled, and saved as TFRecords (tensorflow's binary storage format).
+If you find this helpful in your work, you can consider citing the following :
 
-* `transformer_main.py`  
-Creates a Transformer model, and trains it using Tensorflow Estimator. It contains
-  * `dataset.py`  
-  Contains batching scheme and shuffling.
-  * `model_params.py`  
-  Defines transformer model parameters.
-  * `transformer.py`
-  Defines the transformer model and uses 
-    * `attention_layer.py`   
-    * `beam_search.py`   
-    * `embedding_layer.py`   
-    * `ffn_layer.py`   
-    * `model_utils.py` (position encoding, look-ahead-mask and padding mask)   
-    * `tokenizer.py` (defines subtokenizer class to encode and decode strings)
-  * `metrics.py`    
-  Functions for calculating loss, accuracy, and other model metrics.
-  * `schedule.py`  
-  Abstract training on a step or epoch basis.
-  
-* `translate.py`  
-Translate the model. Contains the script to use the trained model to translate input text or file. Each line in the file is translated separately.
-
-* `compute_bleu.py`  
-Script to compute official BLEU score.
- 
+```
+@article{clift19,    
+  author = {James Clift, Dmitry Doryn, Daniel Murfet and James Wallbridge},    
+  title = {Logic and the 2-Simplicial Transformer},    
+  journal = {preprint arXiv:1909.00668},    
+  year = {2019},    
+}
+```
