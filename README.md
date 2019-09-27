@@ -6,10 +6,12 @@ Currently, the principal files are :
 * `attention2_layer.py` a 2-simplicial attention layer.
 * `transformer2_100.py` a Transformer with 2-simplicial Encoder and standard Decoder.
 
+More will be added in due course.
+
 
 # Referencing
 
-This code was developed for the project [2simplicialtransformer](https://github.com/dmurfet/2simplicialtransformer) by James Clift, Dmitry Doryn, Daniel Murfet and James Wallbridge. If you find this helpful in your work, you can consider citing the following :
+This code was developed for the project [2simplicialtransformer](https://github.com/dmurfet/2simplicialtransformer) by James Clift, Dmitry Doryn, Daniel Murfet and James Wallbridge. If you find this helpful in your work, please consider citing the following :
 
 ```
 @article{clift19,    
