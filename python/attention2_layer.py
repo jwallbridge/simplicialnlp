@@ -176,7 +176,7 @@ def multi_softmax(target, axis, name=None):
     softmax = target_exp / normalize
     return softmax
 
-class AttentionTwo(tf.layers.Layer):  # NEED TO CHANGE TO keras.layers.Layer to process build !!! See EMBEDDING_LAYER.py
+class AttentionTwo(tf.layers.Layer):  
   """Multi-headed attention layer."""
 
   def __init__(self, hidden_size, d2_model: int, num_heads, num_vir_entities: int, attention_dropout, train):
@@ -336,13 +336,7 @@ class AttentionTwo(tf.layers.Layer):  # NEED TO CHANGE TO keras.layers.Layer to 
     pre_logitsvector = qk1k2k2 + k1k2qq + qk2k1k1 - 2 * qk1_e * qk2_e * k1k2_e # shape (-1, xlen-num_ve, num_ve, num_ve) 
     pre_logitsvector = tf.sqrt(pre_logitsvector)
     
-#    norm = tf.sqrt(tf.constant(6*depth2**2 + 4*depth2**3, dtype=tf.float32))
     logits = pre_logitsvector 
-    
-#     # Scale q to prevent the qkk dot product from growing too large.
-#     pre_logitsvector = K.permute_dimensions(pre_logitsvector, [0,2,3,1])
-#     logits = LayerNormalization(axis=[-3,-2,-1])(pre_logitsvector)
-#     logits = K.permute_dimensions(logits, [0,3,1,2])
 
     pad = tf.to_float(tf.equal(logits, 0))  #float tensor with same shape as logits containing values 0 or 1
     bias_simplicial = pad * -1e9
