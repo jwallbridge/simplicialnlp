@@ -1,4 +1,4 @@
-"""Implementation of multiheaded attention and self-attention layers."""
+"""Implementation of multiheaded 2-simplicial attention layers."""
 
 from __future__ import absolute_import
 from __future__ import division
