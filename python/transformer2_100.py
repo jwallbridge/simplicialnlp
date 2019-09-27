@@ -7,7 +7,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import tensorflow as tf  # pylint: disable=g-bad-import-order
+import tensorflow as tf  
 import numpy as np
 import keras
 
@@ -327,11 +327,7 @@ class EncoderStack(tf.layers.Layer):
     self.postprocess_dropout = params["layer_postprocess_dropout"]
     self.d2_model = params["d2_model"]
     self.hidden_size = params["hidden_size"]
-    
-    
-    #self.input_normalization = LayerNormalization()
-    #self.twosimplex_normalization = LayerNormalization()
-    #self.output_normalization = LayerNormalization()
+  
 
   def call(self, encoder_inputs, attention_bias, inputs_padding):
     """Return the output of the encoder layer stacks.
