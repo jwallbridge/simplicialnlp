@@ -1,4 +1,4 @@
-"""Defines the 2-Simplicial Transformer model, and its encoder and decoder stacks.
+"""Defines the 2-Simplicial Transformer Architecuture, with its Encoder and Decoder stacks.
 Based off 
 https://github.com/tensorflow/models/blob/master/official/transformer/model/transformer.py
 """
