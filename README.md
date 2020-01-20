@@ -14,10 +14,10 @@ More will be added in due course.
 This code was developed for the project [2simplicialtransformer](https://github.com/dmurfet/2simplicialtransformer) by James Clift, Dmitry Doryn, Daniel Murfet and James Wallbridge. If you find this helpful in your work, please consider citing the following :
 
 ```
-@article{clift19,    
+@inproceedings{clift2020,    
   author = {James Clift and Dmitry Doryn and Daniel Murfet and James Wallbridge},    
   title = {Logic and the 2-Simplicial Transformer},    
-  journal = {preprint arXiv:1909.00668},    
-  year = {2019},    
+  booktitle = {Proceedings of the International Conference on Learning Representations},    
+  year = {2020},    
 }
 ```
